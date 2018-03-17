@@ -29,7 +29,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', function (err, client) 
     });
     */
 
-    db.collection('Users').find({name: 'Brenno T. Faria'}).toArray().then(function (value) {
+    db.collection('Users').find({name: 'Rodrigo F. Maia'}).count().then(function (value) {
         console.log(JSON.stringify(value, undefined, 2));
     }, function (reason) {
         console.log("Unable to fetch Todos", reason);
