@@ -3,7 +3,7 @@ var bodyParser = require('body-parser');
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todos');
 var {User} = require('./models/user');
-
+const {ObjectID} = require('mongodb');
 /*
 var newTodo = new Todo({
     name:'Buy Milk ',
@@ -44,11 +44,38 @@ app.post('/todos', function(req, res){
     }, function(err){
         res.status(400).send(err);
     });
-
 });
 
+app.get('/todos', function(req, res){
+    Todo.find().then(function(todos){
+        res.send({todos});
+    }, (err) => {
+        res.status(400).send(err);
+    })
+});
+
+app.get('/todos/:id', function(req, res){
+    var id = res.params.id;
+    console.log(res.params.id);
+
+    if (!ObjectID.$isValid(id)){
+        return res.status(404).send();
+    }
+
+    Todo.findById(id).then(function(todo){
+        if(!todo){
+            return res.status(404).send();
+        }
+        res.send({todo});
+    }).catch(function(err){
+        res.status(400).send();
+    })
+
+});
 
 
 app.listen(3000, function(){
    console.log('Server listening on port 3000');
 });
+
+module.export = {app};
