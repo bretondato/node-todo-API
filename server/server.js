@@ -32,6 +32,8 @@ var app = express();
 
 app.use(bodyParser.json());
 
+const port = process.env.PORT || 3000;
+
 app.post('/todos', function(req, res){
     //console.log(req.body.text);
 
@@ -55,10 +57,9 @@ app.get('/todos', function(req, res){
 });
 
 app.get('/todos/:id', function(req, res){
-    var id = res.params.id;
-    console.log(res.params.id);
+    const id = req.params.id;
 
-    if (!ObjectID.$isValid(id)){
+    if (!ObjectID.isValid(id)){
         return res.status(404).send();
     }
 
@@ -70,12 +71,17 @@ app.get('/todos/:id', function(req, res){
     }).catch(function(err){
         res.status(400).send();
     })
-
 });
+//Modulo para get a todo by name
+/*
+app.get('/todos/:name', (req, res) =>{
+   console.log(req.params.name);
+});
+*/
 
 
-app.listen(3000, function(){
-   console.log('Server listening on port 3000');
+app.listen(port, function(){
+   console.log(`Server listening on port:` + port);
 });
 
 module.export = {app};
