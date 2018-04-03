@@ -34,6 +34,7 @@ app.use(bodyParser.json());
 
 const port = process.env.PORT || 3000;
 
+//Module to post some todo on database
 app.post('/todos', function(req, res){
     //console.log(req.body.text);
 
@@ -48,6 +49,7 @@ app.post('/todos', function(req, res){
     });
 });
 
+//Module to get all todos at once
 app.get('/todos', function(req, res){
     Todo.find().then(function(todos){
         res.send({todos});
@@ -56,6 +58,7 @@ app.get('/todos', function(req, res){
     })
 });
 
+//Module to get todos by ID
 app.get('/todos/:id', function(req, res){
     const id = req.params.id;
 
@@ -72,12 +75,32 @@ app.get('/todos/:id', function(req, res){
         res.status(400).send();
     })
 });
+
 //Modulo para get a todo by name
 /*
 app.get('/todos/:name', (req, res) =>{
    console.log(req.params.name);
 });
 */
+
+//Module to delete todo found by id
+app.delete('/todos/:id', (req, res)=>{
+   const id = req.params.id;git
+
+   if (!ObjectID.isValid(id)){
+       return res.status(404).send();
+   }
+
+   Todo.findByIdAndRemove(id).then((todo)=>{
+       if(!todo){
+           return res.status(404).send();
+       }
+       res.send({todo});
+   }).catch((err)=>{
+       res.status(404).send();
+   });
+
+});
 
 
 app.listen(port, function(){
