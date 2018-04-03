@@ -1,23 +1,25 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var {mongoose} = require('./db/mongoose');
-var {Todo} = require('./models/todos');
-var {User} = require('./models/user');
+const express = require('express');
+const bodyParser = require('body-parser');
+const {mongoose} = require('./db/mongoose');
+const {Todo} = require('./models/todos');
+const {User} = require('./models/user');
 const {ObjectID} = require('mongodb');
+const _ = require('lodash');
+
 /*
 var newTodo = new Todo({
     name:'Buy Milk ',
 });
-
-
-var user = new User({
-    email: "brenno.tondato@gmail.com"
-});
-
 newTodo.save().then(function(doc){
     console.log(JSON.stringify(doc, undefined, 2));
 },function(err){
     console.log(err);
+});
+
+
+
+var user = new User({
+    email: "brenno.tondato@gmail.com"
 });
 
 
@@ -49,7 +51,7 @@ app.post('/todos', function(req, res){
     });
 });
 
-//Module to get all todos at once
+//Module to get all todo at once
 app.get('/todos', function(req, res){
     Todo.find().then(function(todos){
         res.send({todos});
@@ -58,7 +60,7 @@ app.get('/todos', function(req, res){
     })
 });
 
-//Module to get todos by ID
+//Module to get a todo by ID
 app.get('/todos/:id', function(req, res){
     const id = req.params.id;
 
@@ -76,7 +78,7 @@ app.get('/todos/:id', function(req, res){
     })
 });
 
-//Modulo para get a todo by name
+//Module to get a todo by name
 /*
 app.get('/todos/:name', (req, res) =>{
    console.log(req.params.name);
@@ -85,7 +87,7 @@ app.get('/todos/:name', (req, res) =>{
 
 //Module to delete todo found by id
 app.delete('/todos/:id', (req, res)=>{
-   const id = req.params.id;git
+   const id = req.params.id;
 
    if (!ObjectID.isValid(id)){
        return res.status(404).send();
@@ -102,9 +104,34 @@ app.delete('/todos/:id', (req, res)=>{
 
 });
 
+//Module to update a todo found by id
+app.patch('/todos/:id', (req, res)=>{
+    const id = req.params.id;
+    var body = _.pick(req.body, ['name', 'Completed']);
+
+    if(!ObjectID.isValid(id)){
+        return res.status(404).send();
+    }
+
+    if(_.isBoolean(body.Completed) && body.Completed){
+        body.CompletedAt = new Date().getTime();
+    }else{
+        body.Completed = false;
+        body.CompletedAt = null;
+    }
+
+    Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo)=>{
+        if(!todo){
+            return res.status(404).send();
+        }
+        res.send({todo});
+    }).catch((err)=>{
+        res.status(404).send();
+    });
+});
 
 app.listen(port, function(){
-   console.log(`Server listening on port:` + port);
+   console.log('Server listening on port: ' + port);
 });
 
 module.export = {app};
