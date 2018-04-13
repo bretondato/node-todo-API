@@ -1,6 +1,4 @@
-var env = process.env.NODE_ENV;
-
-
+require('./config/config');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -38,7 +36,7 @@ var app = express();
 
 app.use(bodyParser.json());
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 //Module to post some todo on database
 app.post('/todos', function(req, res){
