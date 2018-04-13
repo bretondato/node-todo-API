@@ -1,3 +1,7 @@
+var env = process.env.NODE_ENV;
+
+
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const {mongoose} = require('./db/mongoose');
@@ -58,6 +62,12 @@ app.get('/todos', function(req, res){
     }, (err) => {
         res.status(400).send(err);
     })
+});
+
+app.get('/temp', function (req, res) {
+    var temp =  Math.random() * (12 - 2) + 2;
+    var time = new Date().toString();
+    res.send({labels: time, series:temp})
 });
 
 //Module to get a todo by ID
