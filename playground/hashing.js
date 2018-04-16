@@ -1,5 +1,6 @@
 const {SHA256} = require('crypto-js');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 // Token creation and validation without JWT
 /*
@@ -33,7 +34,7 @@ if (resultHash === token.hash) {
 */
 
 // Token creation with JWT
-
+/*
 var data = {
     id: 10
 };
@@ -43,3 +44,21 @@ console.log(token)
 
 var decoded = jwt.decode(token, '123abc');
 console.log(decoded)
+*/
+
+// Using Bcrypt
+
+password = '123abc!';
+
+bcrypt.genSalt(10, (err, salt)=> {
+    console.log(salt);
+    bcrypt.hash(password, salt, (err, hash) =>{
+       console.log(hash)
+    });
+});
+
+var hashPass = '$2a$10$V.nCyxOqeAhYlLO2Qe3jIeo7BlWbp6SULWIsQAchKfSScD5cKDKDy';
+
+bcrypt.compare(password, hashPass, (err, res) =>{
+    console.log(res)
+});
