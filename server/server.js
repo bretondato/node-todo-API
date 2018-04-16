@@ -7,7 +7,7 @@ const {Todo} = require('./models/todos');
 const {User} = require('./models/user');
 const {ObjectID} = require('mongodb');
 const _ = require('lodash');
-
+var {authenticate} = require('./middleware/authenticate');
 /*
 var newTodo = new Todo({
     name:'Buy Milk ',
@@ -51,22 +51,6 @@ app.post('/todos', function(req, res){
     }, function(err){
         res.status(400).send(err);
     });
-});
-
-//Module to post a new user
-app.post('/users', (req, res) =>{
-    var body  = _.pick(req.body, ['email', 'password']);
-    var user = new User(body);
-    //console.log(user)
-
-    user.save().then(() => {
-        // console.log(user.generateAuthToken())
-        return user.generateAuthToken();
-    }).then((token) =>{
-        res.header('x-auth', token).send(user);
-    }).catch(err => {
-        res.status(400).send(err);
-    })
 });
 
 //Module to get all todo at once
@@ -153,6 +137,28 @@ app.patch('/todos/:id', (req, res)=>{
     }).catch((err)=>{
         res.status(404).send();
     });
+});
+
+//Module to post a new user
+app.post('/users', (req, res) =>{
+    var body  = _.pick(req.body, ['email', 'password']);
+    var user = new User(body);
+    //console.log(user)
+
+    user.save().then(() => {
+        // console.log(user.generateAuthToken())
+        return user.generateAuthToken();
+    }).then((token) =>{
+        res.header('x-auth', token).send(user);
+    }).catch(err => {
+        res.status(400).send(err);
+    })
+});
+
+
+//Module to get a user usind Token and Id
+app.get('/users/me',authenticate ,(req, res) => {
+    res.send(req.user)
 });
 
 app.listen(port, function(){
