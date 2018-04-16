@@ -53,6 +53,22 @@ app.post('/todos', function(req, res){
     });
 });
 
+//Module to post a new user
+app.post('/users', (req, res) =>{
+    var body  = _.pick(req.body, ['email', 'password']);
+    var user = new User(body);
+    //console.log(user)
+
+    user.save().then(() => {
+        // console.log(user.generateAuthToken())
+        return user.generateAuthToken();
+    }).then((token) =>{
+        res.header('x-auth', token).send(user);
+    }).catch(err => {
+        res.status(400).send(err);
+    })
+});
+
 //Module to get all todo at once
 app.get('/todos', function(req, res){
     Todo.find().then(function(todos){
@@ -62,6 +78,7 @@ app.get('/todos', function(req, res){
     })
 });
 
+// Module to send a random number and data (simulating a temperature datalogger)
 app.get('/temp', function (req, res) {
     var temp =  Math.random() * (12 - 2) + 2;
     var time = new Date().toString();
