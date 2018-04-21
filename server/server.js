@@ -155,13 +155,12 @@ app.post('/users', (req, res) =>{
     })
 });
 
-
-//Module to get a user usind Token and Id
+//Module to get a user using Token and Id
 app.get('/users/me',authenticate ,(req, res) => {
     res.send(req.user)
 });
 
-
+//Module to user login on API
 app.post('/users/login', (req, res) => {
     let body  = _.pick(req.body, ['email', 'password']);
 
@@ -172,6 +171,15 @@ app.post('/users/login', (req, res) => {
     }).catch((err) =>{
         res.status(400).send();
     });
+});
+
+//Module to user Log out of API
+app.delete('/users/me/token', authenticate, (req, res) => {
+    req.user.removeToken(req.token).then(()=>{
+        res.status(200).send();
+    }).catch((err)=>{
+        res.status(400).send();
+    })
 });
 
 app.listen(port, function(){
