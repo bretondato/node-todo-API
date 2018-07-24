@@ -5,6 +5,19 @@ const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 
 var UserSchema = new mongoose.Schema({
+    nome:{
+        type: String,
+        require: true,
+        trim: true,
+        minlength: 2
+    },
+
+    funcao:{
+        type: String,
+        require: true,
+        minlength: 3
+    },
+
     email:{
         type: String,
         require: true,
@@ -16,11 +29,18 @@ var UserSchema = new mongoose.Schema({
             message: '{VALUE} is not a valid email'
         }
     },
+
     password: {
         type: String,
         require: true,
         minlength: 6
     },
+
+    estacao:{
+        type: String,
+        require: true
+    },
+
     tokens:[{
         access:{
             type: String,
@@ -34,16 +54,16 @@ var UserSchema = new mongoose.Schema({
 });
 
 UserSchema.methods.toJSON = function () {
-    var user = this;
-    var userObject = user.toObject();
+    const user = this;
+    const userObject = user.toObject();
 
     return _.pick(userObject, ['_id', 'email']);
 };
 
 UserSchema.methods.generateAuthToken = function () {
-    var user = this;
-    var access = 'auth';
-    var token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET).toString();
+    const user = this;
+    const access = 'auth';
+    const token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET).toString();
 
     user.tokens.push({access, token});
 
@@ -53,7 +73,7 @@ UserSchema.methods.generateAuthToken = function () {
 };
 
 UserSchema.statics.findByToken = function (token) {
-    var User = this;
+    const User = this;
     var decoded;
 
     try {
